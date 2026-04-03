@@ -2,7 +2,7 @@ const app = new Proxy({}, {
   set(obj, key, value){
     obj[key] = value
 
-    // 更新全部有 {變數} 的元素
+    
     document.querySelectorAll("*").forEach(el => {
       if(el._template){
         let html = el._template
@@ -17,7 +17,7 @@ const app = new Proxy({}, {
   }
 })
 
-// 初始化：掃描所有元素
+
 window.onload = () => {
   document.querySelectorAll("*").forEach(el => {
     if(el.innerHTML.includes("{")){
