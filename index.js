@@ -1,27 +1,41 @@
+
 const app = new Proxy({}, {
   set(obj, key, value){
     obj[key] = value
 
     
-    document.querySelectorAll("*").forEach(el => {
-      if(el._template){
-        let html = el._template
-        for(let k in obj){
-          html = html.replaceAll(`{${k}}`, obj[k])
-        }
-        el.innerHTML = html
-      }
-    })
+    if(!window._engineTemplatesReady){
+      document.addEventListener("DOMContentLoaded", () => {
+        updateTemplates()
+        obj[key] = value 
+      }, { once: true })
+      return true
+    }
 
+    
+    updateTemplates()
     return true
   }
 })
 
+function updateTemplates(){
+  document.querySelectorAll("*").forEach(el => {
+    if(el._template){
+      let html = el._template
+      for(let k in app){
+        html = html.replaceAll(`{${k}}`, app[k])
+      }
+      el.innerHTML = html
+    }
+  })
+}
 
-window.onload = () => {
+
+window.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll("*").forEach(el => {
     if(el.innerHTML.includes("{")){
       el._template = el.innerHTML
     }
   })
-}
+  window._engineTemplatesReady = true
+})
