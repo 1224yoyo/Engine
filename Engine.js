@@ -1,0 +1,27 @@
+const app = new Proxy({}, {
+  set(obj, key, value){
+    obj[key] = value
+
+    // 更新全部有 {變數} 的元素
+    document.querySelectorAll("*").forEach(el => {
+      if(el._template){
+        let html = el._template
+        for(let k in obj){
+          html = html.replaceAll(`{${k}}`, obj[k])
+        }
+        el.innerHTML = html
+      }
+    })
+
+    return true
+  }
+})
+
+// 初始化：掃描所有元素
+window.onload = () => {
+  document.querySelectorAll("*").forEach(el => {
+    if(el.innerHTML.includes("{")){
+      el._template = el.innerHTML
+    }
+  })
+}
